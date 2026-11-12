@@ -262,7 +262,11 @@ function fillResult(){const s=CUR.seq,st=CUR.st1,h=$('rHead');
  $('sB1').textContent=t('stB');$('sB2').textContent=t('stBv',{b:st.b.toLocaleString()});$('sY1').textContent=t('stY');$('sY2').textContent=t('stYv',{y:st.yen.toLocaleString()});$('sZ1').textContent=t('stZ');$('sZ2').textContent=t('stZv',{k:kinds(st.got)});}
 const shareURL=()=>'https://nasubi-no-oniwa.github.io/jihanki/';
 function postText(){const s=CUR.seq,st=CUR.st1;return t(s.comp?'postC':s.win?'postW':'postL',{b:st.b.toLocaleString(),y:st.yen.toLocaleString(),k:kinds(st.got),d:s.d.join(''),c:s.win?t('c'+s.c):''});}
-function openX(text,url){const u='https://x.com/intent/post?text='+encodeURIComponent(text)+'&url='+encodeURIComponent(url);const w=window.open(u,'_blank');if(!w)location.href=u;}
+// Xの投稿で引用するツイート（なすびのお庭の管理ページ quote/ で日本語・英語を貼りかえられる）
+let QUOTE={};fetch('https://ft-red-default-rtdb.asia-southeast1.firebasedatabase.app/xquote/g/jihanki.json').then(r=>r.json()).then(d=>{if(d&&typeof d==='object')QUOTE=d;}).catch(()=>{});
+function quoteURL(){const u=(lang==='ja'?QUOTE.ja:QUOTE.en)||'';return /^https:\/\/x\.com\/[A-Za-z0-9_]{1,15}\/status\/\d{5,25}$/.test(u)?u:'';}
+function xIntent(text,url){const q=quoteURL();return 'https://x.com/intent/post?text='+encodeURIComponent(q?text+'\n'+url:text)+'&url='+encodeURIComponent(q||url);}
+function openX(text,url){const u=xIntent(text,url);const w=window.open(u,'_blank');if(!w)location.href=u;}
 $('againBtn').onclick=()=>{if(mode==='result')buy(CUR?CUR.drink:0);};
 $('xBtn').onclick=()=>openX(postText(),shareURL());
 $('rTop').onclick=()=>{UI.back();showTitle();};
@@ -294,7 +298,7 @@ function vidDone(blob,mime){mode='result';show('vidPanel');
  $('vidPrev').hidden=false;const url=URL.createObjectURL(blob);$('vidPrev').src=url;$('vidPrev').play().catch(()=>{});
  const ext=/mp4/.test(mime)?'mp4':'webm',nm='jihanki_'+Date.now()+'.'+ext,file=new File([blob],nm,{type:blob.type}),canShare=!!(navigator.canShare&&navigator.canShare({files:[file]}));
  $('vShare').hidden=!canShare;$('vSave').hidden=false;$('vMsg').textContent=canShare?t('vmade'):t('shareHint');
- $('vShare').onclick=async()=>{try{await navigator.share({files:[file],text:postText()+'\n'+shareURL()});gaEv('x_share');}catch(e){}};
+ $('vShare').onclick=async()=>{try{await navigator.share({files:[file],text:postText()+'\n'+shareURL()+(quoteURL()?'\n'+quoteURL():'')});gaEv('x_share');}catch(e){}};
  $('vSave').onclick=()=>{const a=document.createElement('a');a.href=url;a.download=nm;document.body.appendChild(a);a.click();a.remove();};}
 $('vidBtn').onclick=()=>makeVideo();$('vX').onclick=()=>openX(postText(),shareURL());$('vBack').onclick=()=>show('result');
 
