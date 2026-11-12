@@ -83,8 +83,8 @@ if(!IDS.length)return;
 function vis(e){if(!e||!e.isConnected||e.closest('[hidden]'))return false;var r=e.getBoundingClientRect();if(r.width<1||r.height<1)return false;for(var n=e;n&&n.nodeType===1;n=n.parentElement){var s=getComputedStyle(n);if(s.display==='none'||s.visibility==='hidden'||parseFloat(s.opacity)<0.05)return false;}return true;}
 var was={};setInterval(function(){try{var any=false;for(var i=0;i<IDS.length;i++){if(vis(document.getElementById(IDS[i])))any=true;}if(any&&!was.v)ev('result_view');was.v=any;}catch(e){}},700);
 }catch(e){}})();</script>
-<!-- nasubi-ad: スマホのとき、結果画面とタイトル画面の決めた場所に広告の帯（と、決めた場所だけその下に大きい広告）を出す（遊んでいる最中は出さない・ボタンに重ねない・広告の幅320pxを切らない・画面が出たらすぐ見せるが、最初の1.2秒は押しても反応しない・画面が出るたびに新しい広告を読みこむ（場所ごとに20秒に1回まで。このゲームは結果画面が数秒おきに出るので、ほかの作品より間をあける）・画面が隠れて2秒たったら広告を外して止める・タイトル画面はタイトル用の広告枠を使う） -->
-<script>(function(){try{var C=[{"a": "#result .card", "v": "#result"}, {"a": "#title div.card", "v": "#title", "t": 1, "b": 1, "m": 20, "x": "", "x2": ""}],BIG=1,M=20,EX="",EX2="",AD='https://nasubi-no-oniwa.github.io/ad/',AD2='https://nasubi-no-oniwa.github.io/ad/big.html',TAD='https://nasubi-no-oniwa.github.io/ad/t.html',TAD2='https://nasubi-no-oniwa.github.io/ad/tbig.html',LOCK=1200,HOLD=2000,MIN=20000;
+<!-- nasubi-ad: スマホのとき、結果画面とタイトル画面の決めた場所に広告の帯（と、決めた場所だけその下に大きい広告）を出す（遊んでいる最中は出さない・ボタンに重ねない・広告の幅320pxを切らない・画面が出たらすぐ見せるが、最初の1.2秒は押しても反応しない・画面が出るたびに新しい広告を読みこむ（場所ごとに30秒に1回まで）・画面が隠れて2秒たったら広告を外して止める・タイトル画面はタイトル用の広告枠を使う） -->
+<script>(function(){try{var C=[{"a": "#result .card", "v": "#result"}, {"a": "#title div.card", "v": "#title", "t": 1, "b": 1, "m": 20, "x": "", "x2": ""}],BIG=1,M=20,EX="",EX2="",AD='https://nasubi-no-oniwa.github.io/ad/',AD2='https://nasubi-no-oniwa.github.io/ad/big.html',TAD='https://nasubi-no-oniwa.github.io/ad/t.html',TAD2='https://nasubi-no-oniwa.github.io/ad/tbig.html',LOCK=1200,HOLD=2000,MIN=30000;
 if(/[?&]noad=1/.test(location.search))return;
 if(!/iPhone|iPod|Android|Mobile|Windows Phone|BlackBerry/i.test(navigator.userAgent||''))return;
 var S=[];
@@ -116,6 +116,14 @@ s.f.style.visibility='visible';s.f.style.pointerEvents=pe;if(s.f2){s.f2.style.vi
 function go(){place();try{new MutationObserver(place).observe(document.body,{childList:true,subtree:true});}catch(_){}setInterval(tick,300);}
 if(document.body)go();else document.addEventListener('DOMContentLoaded',go);
 }catch(e){}})();</script>
+<!-- 広告の確認用：アドレスの最後に ?adcheck=1 をつけて開くと、広告の枠の中で何が起きているかを画面の上に字で出す（ふだんは何もしない） -->
+<script>(function(){try{if(!/[?&]adcheck=1/.test(location.search))return;var t0=Date.now();
+function go(){var box=document.createElement('div');box.style.cssText='position:fixed;left:4px;top:4px;right:4px;z-index:99;background:rgba(0,0,0,.88);color:#7CFC8A;font:11px/1.4 monospace;padding:6px;border-radius:6px;white-space:pre-wrap;word-break:break-all;pointer-events:none';document.body.appendChild(box);
+setInterval(function(){var L=[],a=document.querySelectorAll('.nsb-ad');L.push('広告の確認 '+((Date.now()-t0)/1000).toFixed(0)+'秒  スマホ判定='+/iPhone|iPod|Android|Mobile|Windows Phone|BlackBerry/i.test(navigator.userAgent||'')+'  枠の数='+a.length+'  通信='+(navigator.onLine?'あり':'なし'));
+for(var i=0;i<a.length;i++){var e=a[i],r=e.getBoundingClientRect(),f=e.querySelector('iframe'),s='['+(i+1)+'] '+(e.closest('#title')?'タイトル':e.closest('#result')?'結果':'?')+(e.classList.contains('nsb-big')?'・大':'・帯')+' 場所='+Math.round(r.width)+'x'+Math.round(r.height)+' 上から'+Math.round(r.top);
+if(!f){s+=' → iframeなし';}else{s+=' → '+f.src.replace(/^.*\/ad\//,'ad/')+' 表示='+(f.style.visibility||'-');try{var d=f.contentDocument;if(!d){s+=' 中身=読めない';}else{var b=d.body;s+=' 読みこみ='+d.readyState+' 場所='+(d.location?String(d.location.pathname).slice(-12):'?')+' 部品='+(b?b.querySelectorAll('*').length:'-')+'(iframe'+(b?b.querySelectorAll('iframe').length:0)+' img'+(b?b.querySelectorAll('img').length:0)+' a'+(b?b.querySelectorAll('a').length:0)+' script'+(b?b.querySelectorAll('script').length:0)+') 高さ='+(b?b.scrollHeight:'-')+' 字='+(b?String(b.innerText||'').replace(/\s+/g,' ').slice(0,30):'');var n=b&&b.querySelector('iframe');if(n){var q=n.getBoundingClientRect();s+=' 中のiframe='+String(n.src||'(srcなし)').replace(/^https?:\/\//,'').slice(0,36)+' '+Math.round(q.width)+'x'+Math.round(q.height);}}}catch(x){s+=' 中身=エラー '+String(x).slice(0,50);}}
+L.push(s);}box.textContent=L.join('\n');},1000);}
+if(document.body)go();else document.addEventListener('DOMContentLoaded',go);}catch(e){}})();</script>
 </head>
 <body>
 <canvas id="c"></canvas>
