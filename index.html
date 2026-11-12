@@ -216,7 +216,7 @@ function show(id){for(const p of PANELS)$(p).hidden=p!==id;}
 let mode='title',IT=0,CUR=null,EV=null,lastDigits=null,KEEP=null,FEED=null;
 function view(){const live=CUR&&(mode==='seq'||mode==='result'||mode==='replay');
  const V={it:IT,last:lastDigits,st:live?(CUR.seq.win&&CUR.t>=CUR.pl.T4?CUR.st1:CUR.st0):snap()};
- if(live){V.seq=CUR.seq;V.pl=CUR.pl;V.t=CUR.t;V.drink=CUR.drink;V.skipHint=mode!=='result';}else{V.t=-1;if(mode==='idle')V.hint=t('tap');}
+ if(live){V.seq=CUR.seq;V.pl=CUR.pl;V.t=CUR.t;V.drink=CUR.drink;V.skipHint=mode!=='result'&&!PV;}else{V.t=-1;if(mode==='idle')V.hint=t('tap');}
  if(FEED&&mode!=='title'){const a=IT-FEED.at;V.feed=a<4.5?{text:FEED.text,col:FEED.col,a:Math.min(1,a/.3,(4.5-a)/.5)}:null;}
  return V;}
 function frame(dt){IT+=dt;
